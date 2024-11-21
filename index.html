@@ -2,99 +2,105 @@
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>SG NRIC Generator</title>
-	<!-- Bootstrap CSS -->
-	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-	<style>
-		.main {
-			min-height: 100vh;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-		}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SG NRIC Generator</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .main {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-		.container {
-			margin-top: 50px;
-		}
-	</style>
+        .container {
+            margin-top: 50px;
+        }
+    </style>
 </head>
 
 <body>
 
-	<div class="main">
-		<div class="container text-center">
-			<h1 class="mb-4">Singapore NRIC Generator</h1>
-			<p>Click the button below to generate a random SG NRIC number:</p>
+    <div class="main">
+        <div class="container text-center">
+            <h1 class="mb-4">Singapore NRIC Generator</h1>
+            <p>Click the button below to generate a random SG NRIC number:</p>
 
-			<button id="generateButton" class="btn btn-primary mt-3">Generate NRIC</button>
+            <button id="generateButton" class="btn btn-primary mt-3">Generate NRIC</button>
 
-			<div class="mt-4">
-				<h3 id="nricDisplay" class="text-success"></h3>
-				<button id="copyButton" class="btn btn-outline-secondary mt-2" style="display: none;">Copy NRIC</button>
-			</div>
-		</div>
-	</div>
+            <div class="mt-4">
+                <h3 id="nricDisplay" class="text-success"></h3>
+                <button id="copyButton" class="btn btn-outline-secondary mt-2" style="display: none;">Copy NRIC</button>
+            </div>
+        </div>
+    </div>
 
-	<!-- JavaScript for NRIC Generator and Copy Function -->
-	<script>
-		function generateNRIC() {
-			// Prefix T for individuals born from 2000 onwards
-			    const prefix = 'T';
-			
-			    // Generate a year of birth for a child aged 2-6 (current year minus 2-6 years)
-			    const currentYear = new Date().getFullYear();
-			    const birthYear = currentYear - Math.floor(Math.random() * 5 + 2); // Random year between currentYear-6 to currentYear-2
-			
-			    // Generate a 6-digit serial number (random number between 000000 and 999999)
-			    const serial = String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
-			
-			    // Combine year and serial
-			    const nricWithoutChecksum = `${prefix}${birthYear}${serial}`;
-			
-			    // Compute the checksum
-			    const weights = [2, 7, 6, 5, 4, 3, 2];
-			    const checksumLetters = "ABCDEFGHIZJ"; // T prefix checksum
-			    const nricDigits = nricWithoutChecksum.slice(1); // Exclude prefix for calculation
-			
-			    const checksum = nricDigits
-			        .split('')
-			        .reduce((sum, digit, index) => sum + digit * weights[index], 0);
-			
-			    const modResult = checksum % 11;
-			    const checkLetter = checksumLetters[11 - modResult];
-			
-			    return `${nricWithoutChecksum}${checkLetter}`;
-		}
+    <!-- JavaScript for NRIC Generator and Copy Function -->
+    <script>
+        function generateNRIC() {
+            // Prefix T for individuals born from 2000 onwards
+            const prefix = 'T';
 
-		// Display NRIC when button is clicked and add copy functionality
-		document.addEventListener("DOMContentLoaded", function () {
-			const generateButton = document.getElementById("generateButton");
-			const nricDisplay = document.getElementById("nricDisplay");
-			const copyButton = document.getElementById("copyButton");
+            // Generate a year of birth for a child aged 2-6 (current year minus 2-6 years)
+            const currentYear = new Date().getFullYear();
+            const birthYear = currentYear - Math.floor(Math.random() * 5 + 2); // Random year between currentYear-6 to currentYear-2
 
-			generateButton.addEventListener("click", function () {
-				const nric = generateNRIC();
-				nricDisplay.textContent = `Generated NRIC: ${nric}`;
-				copyButton.style.display = "inline-block"; // Show the copy button
-			});
+            // Generate a 6-digit serial number (random number between 000000 and 999999)
+            const serial = String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
 
-			copyButton.addEventListener("click", function () {
-				// Copy the NRIC text to clipboard
-				const nricText = nricDisplay.textContent.replace("Generated NRIC: ", "");
-				navigator.clipboard.writeText(nricText).catch((error) => {
-					alert("Failed to copy NRIC.");
-					console.error("Copy failed:", error);
-				});
-			});
-		});
-	</script>
+            // Combine year and serial
+            const nricWithoutChecksum = `${prefix}${birthYear}${serial}`;
 
-	<!-- Bootstrap JS and dependencies (optional) -->
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+            // Compute the checksum
+            const weights = [2, 7, 6, 5, 4, 3, 2];
+            const checksumLetters = "ABCDEFGHIZJ"; // T prefix checksum
+            const nricDigits = nricWithoutChecksum.slice(1); // Exclude prefix for calculation
+            console.log("nricDigits", nricDigits);
+
+
+            const checksum = nricDigits
+                .split('')
+                .reduce((sum, digit, index) => sum + digit * 4, 0);
+
+            console.log("checksum", checksum);
+
+
+            const modResult = checksum % 11;
+            console.log("modResult", modResult);
+
+            const checkLetter = checksumLetters[11 - modResult];
+
+            return `${nricWithoutChecksum}${checkLetter}`;
+        }
+
+        // Display NRIC when button is clicked and add copy functionality
+        document.addEventListener("DOMContentLoaded", function () {
+            const generateButton = document.getElementById("generateButton");
+            const nricDisplay = document.getElementById("nricDisplay");
+            const copyButton = document.getElementById("copyButton");
+
+            generateButton.addEventListener("click", function () {
+                const nric = generateNRIC();
+                nricDisplay.textContent = `Generated NRIC: ${nric}`;
+                copyButton.style.display = "inline-block"; // Show the copy button
+            });
+
+            copyButton.addEventListener("click", function () {
+                // Copy the NRIC text to clipboard
+                const nricText = nricDisplay.textContent.replace("Generated NRIC: ", "");
+                navigator.clipboard.writeText(nricText).catch((error) => {
+                    alert("Failed to copy NRIC.");
+                    console.error("Copy failed:", error);Ï                });
+            });
+        });
+    </script>
+
+    <!-- Bootstrap JS and dependencies (optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 
