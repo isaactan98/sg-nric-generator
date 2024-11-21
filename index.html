@@ -23,8 +23,15 @@
 <body>
 
 <div class="main">
-    <div class="container text-center">
-        <h1 class="mb-2">Singapore NRIC Generator</h1>
+    <div class="container">
+        <figure>
+            <blockquote class="blockquote">
+                <h3 class="mb-4">Singapore NRIC Generator</h3>
+            </blockquote>
+            <figcaption class="blockquote-footer">
+                T prefix
+            </figcaption>
+        </figure>
 
         <div class="form-floating">
             <input class="form-control" placeholder="How many do you want?" id="generateNumber" type="number"
@@ -32,7 +39,9 @@
             <label for="generateNumber">How many do u want???</label>
         </div>
 
-        <button id="generateButton" class="btn btn-primary mt-3">Generate NRIC</button>
+        <div class="text-center w-full">
+            <button id="generateButton" class="btn btn-primary mt-3">Generate</button>
+        </div>
 
         <div class="mt-4">
             <textarea aria-label="" id="nricDisplay" class="form-control"></textarea>
