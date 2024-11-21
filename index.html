@@ -40,58 +40,32 @@
 	<!-- JavaScript for NRIC Generator and Copy Function -->
 	<script>
 		function generateNRIC() {
-			// Step 1: Limit prefixes to S and T
-			const prefixes = ['S', 'T'];
-			const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
-
-			// Get the current year
-			const currentYear = new Date().getFullYear();
-
-			// Step 2: Generate a 7-digit serial number with birth year based on age range
-			let birthYear, serialNumberStart;
-
-			if (prefix === 'S') {
-				// Fixed format for 'S' prefix, using 9xxxxxx for this example
-				serialNumberStart = '9';
-				birthYear = currentYear - (2 + Math.floor(Math.random() * 5)); // Age range 2-6 years for a child
-			} else if (prefix === 'T') {
-				// Generate a random birth year between 2 and 6 years ago
-				const randomAge = 1 + Math.floor(Math.random() * 4); // 2-6 years old
-				
-				birthYear = currentYear - randomAge;
-
-				// Use the first digit(s) of birth year to start the serial number, for modern format
-				serialNumberStart = 2 + birthYear.toString().slice(-1); // Last digit of the birth year (e.g., 2021 -> 1)
-			}
-
-			// Complete the 7-digit serial number with random digits
-			const randomSerial = Math.floor(100000 + Math.random() * 900000).toString();
-			const serialNumber = serialNumberStart + randomSerial.slice(1); // Ensure 7 digits total
-
-			// Step 3: Calculate the checksum
-			const weights = [2, 7, 6, 5, 4, 3, 2];
-			let total = 0;
-
-			// Add weights * digits for the serial number
-			for (let i = 0; i < serialNumber.length; i++) {
-				total += parseInt(serialNumber[i], 10) * weights[i];
-			}
-
-			// Adjust based on prefix (T requires +4 adjustment)
-			if (prefix === 'T') {
-				total += 4;
-			}
-
-			const checksumLetters = {
-				'S': 'JZIHGFEDCBA',
-				'T': 'JZIHGFEDCBA'
-			};
-
-			const checksumIndex = total % 11;
-			const checksum = checksumLetters[prefix][checksumIndex];
-
-			// Combine to form the full NRIC number
-			return `${prefix}${serialNumber}${checksum}`;
+			// Prefix T for individuals born from 2000 onwards
+			    const prefix = 'T';
+			
+			    // Generate a year of birth for a child aged 2-6 (current year minus 2-6 years)
+			    const currentYear = new Date().getFullYear();
+			    const birthYear = currentYear - Math.floor(Math.random() * 5 + 2); // Random year between currentYear-6 to currentYear-2
+			
+			    // Generate a 6-digit serial number (random number between 000000 and 999999)
+			    const serial = String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
+			
+			    // Combine year and serial
+			    const nricWithoutChecksum = `${prefix}${birthYear}${serial}`;
+			
+			    // Compute the checksum
+			    const weights = [2, 7, 6, 5, 4, 3, 2];
+			    const checksumLetters = "ABCDEFGHIZJ"; // T prefix checksum
+			    const nricDigits = nricWithoutChecksum.slice(1); // Exclude prefix for calculation
+			
+			    const checksum = nricDigits
+			        .split('')
+			        .reduce((sum, digit, index) => sum + digit * weights[index], 0);
+			
+			    const modResult = checksum % 11;
+			    const checkLetter = checksumLetters[11 - modResult];
+			
+			    return `${nricWithoutChecksum}${checkLetter}`;
 		}
 
 		// Display NRIC when button is clicked and add copy functionality
