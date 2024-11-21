@@ -23,84 +23,79 @@
 
 <body>
 
-    <div class="main">
-        <div class="container text-center">
-            <h1 class="mb-4">Singapore NRIC Generator</h1>
-            <p>Click the button below to generate a random SG NRIC number:</p>
+<div class="main">
+    <div class="container text-center">
+        <h1 class="mb-4">Singapore NRIC Generator</h1>
+        <p>Click the button below to generate a random SG NRIC number:</p>
 
-            <button id="generateButton" class="btn btn-primary mt-3">Generate NRIC</button>
+        <button id="generateButton" class="btn btn-primary mt-3">Generate NRIC</button>
 
-            <div class="mt-4">
-                <h3 id="nricDisplay" class="text-success"></h3>
-                <button id="copyButton" class="btn btn-outline-secondary mt-2" style="display: none;">Copy NRIC</button>
-            </div>
+        <div class="mt-4">
+            <h3 id="nricDisplay" class="text-success"></h3>
+            <button id="copyButton" class="btn btn-outline-secondary mt-2" style="display: none;">Copy NRIC</button>
         </div>
     </div>
+</div>
 
-    <!-- JavaScript for NRIC Generator and Copy Function -->
-    <script>
-        function generateNRIC() {
-            // Prefix T for individuals born from 2000 onwards
-            const prefix = 'T';
+<!-- JavaScript for NRIC Generator and Copy Function -->
+<script>
+    // Generate NRIC function
+    const generate = () => {
+        const first = 'T'; // Prefix is always T
+        const currentYear = new Date().getFullYear();
+        const birthYear = Math.floor(Math.random() * 5) + (currentYear - 6); // Random year between (currentYear - 6) to (currentYear - 2)
+        const age = currentYear - birthYear; // Calculate age
+        const chars = (Math.floor(Math.random() * 9999999) + 10000000).toString().slice(1).split('');
 
-            // Generate a year of birth for a child aged 2-6 (current year minus 2-6 years)
-            const currentYear = new Date().getFullYear();
-            const birthYear = currentYear - Math.floor(Math.random() * 5 + 2); // Random year between currentYear-6 to currentYear-2
+        // Set the first digit to age
+        chars[0] = birthYear.toString().slice(1,2);
+        chars[1] = birthYear.toString().slice(2,3);
+        
+        const output = first + chars.join('');
 
-            // Generate a 6-digit serial number (random number between 000000 and 999999)
-            const serial = String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
+        chars[0] *= 2;
+        chars[1] *= 7;
+        chars[2] *= 6;
+        chars[3] *= 5;
+        chars[4] *= 4;
+        chars[5] *= 3;
+        chars[6] *= 2;
 
-            // Combine year and serial
-            const nricWithoutChecksum = `${prefix}${birthYear}${serial}`;
+        const sum = chars.reduce((a, v) => a + v, 0);
+        const offset = 4; // Offset for 'T' prefix
+        const index = (offset + sum) % 11;
 
-            // Compute the checksum
-            const weights = [2, 7, 6, 5, 4, 3, 2];
-            const checksumLetters = "ABCDEFGHIZJ"; // T prefix checksum
-            const nricDigits = nricWithoutChecksum.slice(1); // Exclude prefix for calculation
-            console.log("nricDigits", nricDigits);
+        const checksum = ["J", "Z", "I", "H", "G", "F", "E", "D", "C", "B", "A"][index];
+        return output + checksum;
+    };
 
+    // Display NRIC when button is clicked and add copy functionality
+    document.addEventListener("DOMContentLoaded", function () {
+        const generateButton = document.getElementById("generateButton");
+        const nricDisplay = document.getElementById("nricDisplay");
+        const copyButton = document.getElementById("copyButton");
 
-            const checksum = nricDigits
-                .split('')
-                .reduce((sum, digit, index) => sum + digit * 4, 0);
+        generateButton.addEventListener("click", function () {
+            const nric = generate();
+            nricDisplay.textContent = `Generated NRIC: ${nric}`;
+            copyButton.style.display = "inline-block"; // Show the copy button
+        });
 
-            console.log("checksum", checksum);
-
-
-            const modResult = checksum % 11;
-            console.log("modResult", modResult);
-
-            const checkLetter = checksumLetters[11 - modResult];
-
-            return `${nricWithoutChecksum}${checkLetter}`;
-        }
-
-        // Display NRIC when button is clicked and add copy functionality
-        document.addEventListener("DOMContentLoaded", function () {
-            const generateButton = document.getElementById("generateButton");
-            const nricDisplay = document.getElementById("nricDisplay");
-            const copyButton = document.getElementById("copyButton");
-
-            generateButton.addEventListener("click", function () {
-                const nric = generateNRIC();
-                nricDisplay.textContent = `Generated NRIC: ${nric}`;
-                copyButton.style.display = "inline-block"; // Show the copy button
-            });
-
-            copyButton.addEventListener("click", function () {
-                // Copy the NRIC text to clipboard
-                const nricText = nricDisplay.textContent.replace("Generated NRIC: ", "");
-                navigator.clipboard.writeText(nricText).catch((error) => {
-                    alert("Failed to copy NRIC.");
-                    console.error("Copy failed:", error);Ï                });
+        copyButton.addEventListener("click", function () {
+            // Copy the NRIC text to clipboard
+            const nricText = nricDisplay.textContent.replace("Generated NRIC: ", "");
+            navigator.clipboard.writeText(nricText).catch((error) => {
+                alert("Failed to copy NRIC.");
+                console.error("Copy failed:", error);
             });
         });
-    </script>
+    });
+</script>
 
-    <!-- Bootstrap JS and dependencies (optional) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Bootstrap JS and dependencies (optional) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 
